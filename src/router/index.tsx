@@ -1,13 +1,55 @@
-import { Navigate, createHashRouter } from 'react-router-dom'
+import { Navigate, createBrowserRouter } from 'react-router-dom'
+import Login from '../views/login/login'
+import { Children } from 'react'
+import CommonLayout from '../components/common-layout/common-layout'
+import Welcome from '../views/welcome/welcome'
 
 const router = [
   {
     path: '/',
-    element: <div>Welcome</div>
+    element: <CommonLayout />,
+    children: [
+      {
+        index: true,
+        element: <Welcome />
+      },
+      {
+        path: 'dashboard',
+        element: <Welcome />
+      },
+      {
+        path: 'userList',
+        element: <Welcome />
+      },
+      {
+        path: 'menuList',
+        element: <Welcome />
+      },
+      {
+        path: 'roleList',
+        element: <Welcome />
+      },
+      {
+        path: 'deptList',
+        element: <Welcome />
+      },
+      {
+        path: 'orderList',
+        element: <Welcome />
+      },
+      {
+        path: 'cluster',
+        element: <Welcome />
+      },
+      {
+        path: 'driverList',
+        element: <Welcome />
+      }
+    ]
   },
   {
     path: '/login',
-    element: <div>login</div>
+    element: <Login />
   },
   {
     path: '*',
@@ -23,4 +65,4 @@ const router = [
   }
 ]
 
-export default createHashRouter(router)
+export default createBrowserRouter(router)
