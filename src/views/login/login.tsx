@@ -1,21 +1,33 @@
-import React from 'react'
-import { Button, Form, Input } from 'antd'
+import React, { useState } from 'react'
+import { Button, Form, Input, message } from 'antd'
 import styles from './login.module.scss'
+import api from '../../api/service'
+import storage from '../../utils/storage'
 const { Item } = Form
 const Login = () => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const handleSubmit = async (values: any) => {
+    setLoading(true)
+    const res = await api.login(values)
+    if (res) {
+      storage.set('token', res)
+      setLoading(false)
+      message.success('登陆成功')
+    }
+  }
   return (
     <div className={styles.login}>
       <div className={styles['login-wrapper']}>
         <div className={styles['login-title']}>系统登陆</div>
-        <Form>
-          <Item>
+        <Form onFinish={handleSubmit}>
+          <Item name='userName'>
             <Input></Input>
           </Item>
-          <Item>
+          <Item name='userPwd'>
             <Input.Password></Input.Password>
           </Item>
           <Item>
-            <Button htmlType='submit' block>登录</Button>
+            <Button type='primary' htmlType='submit' loading={loading} block>登录</Button>
           </Item>
         </Form>
       </div>

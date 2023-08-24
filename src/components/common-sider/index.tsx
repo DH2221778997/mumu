@@ -1,15 +1,15 @@
 import React from 'react'
 import logo from '../../assets/imgs/logo.png'
-import { Menu } from 'antd'
+import { Collapse, Menu } from 'antd'
 import { UserOutlined, VideoCameraOutlined, UploadOutlined } from '@ant-design/icons'
 import Sider from 'antd/es/layout/Sider'
 import styles from './index.module.scss'
-const CommonSider = () => {
+const CommonSider = ({collapsed}:{collapsed:boolean}) => {
   return (
-    <Sider >
+    <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className={styles['logo-container']}>
           <img src={logo} alt='logo' />
-          <span>慕慕货运</span>
+          {collapsed? '' : <span>慕慕货运</span>}
         </div>
         <Menu 
         theme='dark'

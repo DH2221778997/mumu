@@ -1,0 +1,9 @@
+.outer-layout {
+    height: 100%;
+
+    .inner-layout {
+        padding: 20px;
+        border-radius: 6px;
+        overflow-y: auto;
+    }
+}
