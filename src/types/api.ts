@@ -39,6 +39,21 @@ export namespace User {
     state?: number
   }
   // 创建用户参数
+  export interface aa {
+    createId: 1000002
+    deptId: ''
+    deptName: ''
+    job: ''
+    mobile: ''
+    role: 1
+    roleList: []
+    state: 1
+    userEmail: '2221778997@mars.com'
+    userId: 1000375
+    userImg: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'
+    userName: '2221778997'
+    _id: '64bcc1d064d7e29e5d44b532'
+  }
   export interface CreateParams {
     userName: string
     userEmail: string

@@ -11,6 +11,10 @@ const router = [
     children: [
       {
         index: true,
+        element: <Navigate to='welcome' />
+      },
+      {
+        path: 'welcome',
         element: <Welcome />
       },
       {

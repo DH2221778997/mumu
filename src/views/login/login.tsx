@@ -3,8 +3,10 @@ import { Button, Form, Input, message } from 'antd'
 import styles from './login.module.scss'
 import api from '../../api/service'
 import storage from '../../utils/storage'
+import { useNavigate } from 'react-router-dom'
 const { Item } = Form
 const Login = () => {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState<boolean>(false)
   const handleSubmit = async (values: any) => {
     setLoading(true)
@@ -13,6 +15,7 @@ const Login = () => {
       storage.set('token', res)
       setLoading(false)
       message.success('登陆成功')
+      navigate('/welcome')
     }
   }
   return (
@@ -27,7 +30,9 @@ const Login = () => {
             <Input.Password></Input.Password>
           </Item>
           <Item>
-            <Button type='primary' htmlType='submit' loading={loading} block>登录</Button>
+            <Button type='primary' htmlType='submit' loading={loading} block>
+              登录
+            </Button>
           </Item>
         </Form>
       </div>
