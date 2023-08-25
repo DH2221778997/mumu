@@ -4,6 +4,7 @@ import { Children } from 'react'
 import CommonLayout from '../components/common-layout/common-layout'
 import Welcome from '../views/welcome/welcome'
 import Dashboard from '../views/dashboard'
+import UserList from '../views/system/user'
 
 const router = [
   {
@@ -24,7 +25,7 @@ const router = [
       },
       {
         path: 'userList',
-        element: <Welcome />
+        element: <UserList />
       },
       {
         path: 'menuList',
