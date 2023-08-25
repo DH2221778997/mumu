@@ -1,4 +1,4 @@
-import { Avatar, Descriptions } from 'antd'
+import { Avatar, Button, Card, Descriptions } from 'antd'
 import React, { useEffect, useState } from 'react'
 import styles from './index.module.scss'
 import BaseEcharts1 from '../../components/echarts/base-echarts1'
@@ -8,6 +8,7 @@ import { useUserInfoStore } from '../../store/useUserInfoStore'
 import { stateFormatter } from '../../utils'
 import api from '../../api/service'
 import { OrderType } from '../../types/api'
+import useCharts from '../../hook/useCharts'
 const Dashboard = () => {
   const userInfo = useUserInfoStore(state => state.userInfo)
   const [reportData, setReportData] = useState<OrderType.ReportData>()
@@ -18,6 +19,10 @@ const Dashboard = () => {
   useEffect(() => {
     getReportData()
   }, [])
+  const [lineChartRef, lineChartInstance] = useCharts()
+  const [pieChart1Ref, pieChart1Instance] = useCharts()
+  const [pieChart2Ref, pieChart2Instance] = useCharts()
+  const [radarChartRef, radarChartInstance] = useCharts()
   return (
     <div className={styles.dashboard}>
       <div className={styles['user-info']}>
@@ -60,13 +65,41 @@ const Dashboard = () => {
         </div>
       </div>
       <div className={styles.chart}>
-        <BaseEcharts1 />
+        <Card
+          title='订单和流水走势图'
+          extra={<Button type='primary'>刷新</Button>}
+        >
+          <div
+            className='content'
+            ref={lineChartRef}
+            style={{ width: '1100px', height: '400px' }}
+          ></div>
+        </Card>
       </div>
       <div className={styles.chart}>
-        <BaseEcharts2 />
+        <Card title='司机分布' extra={<Button type='primary'>刷新</Button>}>
+          <div style={{ display: 'flex' }}>
+            <div
+              className='content'
+              ref={pieChart1Ref}
+              style={{ width: '550px', height: '400px' }}
+            ></div>
+            <div
+              className='content'
+              ref={pieChart2Ref}
+              style={{ width: '550px', height: '400px' }}
+            ></div>
+          </div>
+        </Card>
       </div>
       <div className={styles.chart}>
-        <BaseEcharts3 />
+        <Card title='模型诊断' extra={<Button type='primary'>刷新</Button>}>
+          <div
+            className='content'
+            ref={radarChartRef}
+            style={{ width: '1100px', height: '400px' }}
+          ></div>
+        </Card>
       </div>
     </div>
   )
