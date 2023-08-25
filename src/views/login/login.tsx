@@ -4,15 +4,17 @@ import styles from './login.module.scss'
 import api from '../../api/service'
 import storage from '../../utils/storage'
 import { useNavigate } from 'react-router-dom'
+import { useTokenStore } from '../../store/useTokenStore'
 const { Item } = Form
 const Login = () => {
   const navigate = useNavigate()
+  const updateToken = useTokenStore(state => state.updateToken)
   const [loading, setLoading] = useState<boolean>(false)
   const handleSubmit = async (values: any) => {
     setLoading(true)
     const res = await api.login(values)
     if (res) {
-      storage.set('token', res)
+      updateToken(res)
       setLoading(false)
       message.success('登陆成功')
       navigate('/welcome')

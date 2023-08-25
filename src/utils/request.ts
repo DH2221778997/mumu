@@ -1,5 +1,10 @@
-import axios from 'axios'
+import axios, {
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig
+} from 'axios'
 import storage from './storage'
+import { Result } from '../types/api'
 
 const instance = axios.create({
   baseURL: '/api',
@@ -10,37 +15,28 @@ const instance = axios.create({
     icode: ''
   }
 })
-instance.interceptors.request.use(
-  config => {
-    const token = storage.get('token')
-    console.log(token)
-    config.headers.icode = '36596D115B26C3BE'
-    if (token) {
-      config.headers.Authorization = 'Bearer ' + token
-    }
-    return config
-  },
-  error => {
-    return Promise.reject(error)
+instance.interceptors.request.use((value: InternalAxiosRequestConfig<any>) => {
+  const token = storage.get('token')
+  value.headers.icode = '36596D115B26C3BE'
+  if (token) {
+    value.headers.Authorization = 'Bearer ' + token
   }
-)
+  return value
+})
 instance.interceptors.response.use(
-  res => {
-    const data = res.data
-    if (data.code === 50001) {
-    }
-    console.log(data, res.data.data)
-    return res.data.data
+  (value: AxiosResponse<Result, any>) => {
+    const data = value.data
+    return data.data
   },
-  error => {
+  (error: any) => {
     return Promise.reject(error)
   }
 )
 export default {
-  get(url: string, params: object) {
-    return instance.get(url, { params })
+  get<T>(url: string, params?: object): Promise<T> {
+    return instance.get<T>(url, { params })
   },
-  post(url: string, params: object) {
-    return instance.post(url, params)
+  post<T>(url: string, params: object): Promise<T> {
+    return instance.post<T>(url, params)
   }
 }

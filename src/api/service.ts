@@ -2,7 +2,15 @@
  * API 接口管理
  */
 
-import { Login, User, Dept, Role, MenuType, OrderType, ResultData } from '../types/api'
+import {
+  Login,
+  User,
+  Dept,
+  Role,
+  MenuType,
+  OrderType,
+  ResultData
+} from '../types/api'
 import request from '../utils/request'
 
 // 登录
@@ -63,7 +71,9 @@ export default {
   },
   // 获取用户权限列表
   getPermissionList() {
-    return request.get<{ buttonList: string[]; menuList: MenuType.MenuItem[] }>('/users/getPermissionList')
+    return request.get<{ buttonList: string[]; menuList: MenuType.MenuItem[] }>(
+      '/users/getPermissionList'
+    )
   },
 
   /* 菜单管理 */
@@ -138,7 +148,10 @@ export default {
     return request.get<OrderType.DictItem[]>('/order/cityList')
   },
   getOrderList(params: OrderType.OrderSearchParams) {
-    return request.get<OrderType.OrderData<OrderType.OrderItem>>('/order/list', params)
+    return request.get<OrderType.OrderData<OrderType.OrderItem>>(
+      '/order/list',
+      params
+    )
   },
   // 创建订单
   createOrder(params: OrderType.OrderItem) {
@@ -158,11 +171,16 @@ export default {
   },
   // 查询订单聚合
   getOrderCluster(cityId: number) {
-    return request.get<Array<{ lng: string; lat: string }>>(`/order/cluster/${cityId}`)
+    return request.get<Array<{ lng: string; lat: string }>>(
+      `/order/cluster/${cityId}`
+    )
   },
   // 查询司机列表
   getDriverList(params: { driverName: string; accountStatus: number }) {
-    return request.get<OrderType.OrderData<OrderType.DriverItem>>(`/order/driver/list`, params)
+    return request.get<OrderType.OrderData<OrderType.DriverItem>>(
+      `/order/driver/list`,
+      params
+    )
   },
   // 文件流导出
   orderExport(data: OrderType.OrderSearchParams) {

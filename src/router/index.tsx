@@ -3,6 +3,7 @@ import Login from '../views/login/login'
 import { Children } from 'react'
 import CommonLayout from '../components/common-layout/common-layout'
 import Welcome from '../views/welcome/welcome'
+import Dashboard from '../views/dashboard'
 
 const router = [
   {
@@ -19,7 +20,7 @@ const router = [
       },
       {
         path: 'dashboard',
-        element: <Welcome />
+        element: <Dashboard />
       },
       {
         path: 'userList',
