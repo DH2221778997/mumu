@@ -23,6 +23,139 @@ const Dashboard = () => {
   const [pieChart1Ref, pieChart1Instance] = useCharts()
   const [pieChart2Ref, pieChart2Instance] = useCharts()
   const [radarChartRef, radarChartInstance] = useCharts()
+  //渲染折线图
+  const renderLinechart = async () => {
+    const res = await api.getLineData()
+    lineChartInstance?.setOption({
+      legend: {
+        show: true
+      },
+      tooltip: {
+        show: true,
+        trigger: 'axis'
+      },
+      xAxis: {
+        type: 'category',
+        data: res.label
+      },
+      yAxis: {
+        type: 'value'
+      },
+      grid: {
+        left: 50,
+        right: 50,
+        bottom: 20
+      },
+      series: [
+        {
+          data: res.order,
+          type: 'line',
+          name: '订单'
+        },
+        {
+          data: res.money,
+          type: 'line',
+          name: '流水'
+        }
+      ]
+    })
+  }
+  //渲染饼图1
+  const renderPiechart1 = async () => {
+    const res = await api.getPieCityData()
+    pieChart1Instance?.setOption({
+      title: {
+        text: '司机城市分布',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [
+        {
+          name: '城市分布',
+          type: 'pie',
+          radius: '50%',
+          data: res,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    })
+  }
+  //渲染饼图2
+  const renderPiechart2 = async () => {
+    const res = await api.getPieAgeData()
+    pieChart2Instance?.setOption({
+      title: {
+        text: '司机年龄分布',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [
+        {
+          name: '年龄分布',
+          type: 'pie',
+          radius: [50, 170],
+          roseType: 'area',
+          data: res,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }
+      ]
+    })
+  }
+  //渲染雷达图
+  const renderRadarchart = async () => {
+    const res = await api.getRadarData()
+    radarChartInstance?.setOption({
+      legend: {
+        data: ['司机模型诊断']
+      },
+      radar: {
+        indicator: res.indicator
+      },
+      series: [
+        {
+          name: 'Budget vs spending',
+          type: 'radar',
+          data: res.data
+        }
+      ]
+    })
+  }
+  useEffect(() => {
+    renderLinechart()
+    renderPiechart1()
+    renderPiechart2()
+    renderRadarchart()
+  }, [
+    lineChartInstance,
+    pieChart1Instance,
+    pieChart2Instance,
+    radarChartInstance
+  ])
+
   return (
     <div className={styles.dashboard}>
       <div className={styles['user-info']}>
@@ -67,7 +200,11 @@ const Dashboard = () => {
       <div className={styles.chart}>
         <Card
           title='订单和流水走势图'
-          extra={<Button type='primary'>刷新</Button>}
+          extra={
+            <Button type='primary' onClick={renderLinechart}>
+              刷新
+            </Button>
+          }
         >
           <div
             className='content'
@@ -77,7 +214,20 @@ const Dashboard = () => {
         </Card>
       </div>
       <div className={styles.chart}>
-        <Card title='司机分布' extra={<Button type='primary'>刷新</Button>}>
+        <Card
+          title='司机分布'
+          extra={
+            <Button
+              type='primary'
+              onClick={() => {
+                renderPiechart1()
+                renderPiechart2()
+              }}
+            >
+              刷新
+            </Button>
+          }
+        >
           <div style={{ display: 'flex' }}>
             <div
               className='content'
@@ -93,7 +243,14 @@ const Dashboard = () => {
         </Card>
       </div>
       <div className={styles.chart}>
-        <Card title='模型诊断' extra={<Button type='primary'>刷新</Button>}>
+        <Card
+          title='模型诊断'
+          extra={
+            <Button type='primary' onClick={renderRadarchart}>
+              刷新
+            </Button>
+          }
+        >
           <div
             className='content'
             ref={radarChartRef}
