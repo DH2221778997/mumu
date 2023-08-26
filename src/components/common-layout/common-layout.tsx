@@ -31,7 +31,6 @@ const CommonLayout = () => {
         <Layout className={styles['inner-layout']}>
           <Content
             style={{
-              backgroundColor: '#fff',
               minHeight: 'calc(100vh - 196px)',
               flex: 'none'
             }}

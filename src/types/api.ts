@@ -42,11 +42,11 @@ export namespace User {
   export interface CreateParams {
     userName: string
     userEmail: string
-    mobile?: number
+    mobile?: string
     job?: string
     state?: number
     roleList?: string[]
-    deptId?: string[]
+    deptId?: string
     userImg: string
   }
   // 修改用户参数
@@ -55,6 +55,7 @@ export namespace User {
   }
   // 用户对象
   export interface UserItem extends CreateParams {
+    _id: string
     userId: number
     stateName?: string
     deptName?: string
