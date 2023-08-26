@@ -5,6 +5,7 @@ import { ColumnsType } from 'antd/es/table'
 import { PageParams, User } from '../../../types/api'
 import api from '../../../api/service'
 import dayjs from 'dayjs'
+import CreateUser from './create-user'
 const { Item } = Form
 const UserList = () => {
   const [data, setData] = useState<User.UserItem[]>()
@@ -196,6 +197,7 @@ const UserList = () => {
           }}
         />
       </div>
+      <CreateUser />
     </div>
   )
 }
