@@ -1,7 +1,8 @@
+import { DatePicker } from 'antd'
 import React from 'react'
 
 const Welcome = () => {
-  return <div>Welcome</div>
+  return <DatePicker />
 }
 
 export default Welcome
