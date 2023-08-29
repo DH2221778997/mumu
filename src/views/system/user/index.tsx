@@ -1,16 +1,20 @@
 import { Button, Form, Input, Select, Table } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import '../../../index.scss'
 import { ColumnsType } from 'antd/es/table'
 import { PageParams, User } from '../../../types/api'
 import api from '../../../api/service'
 import dayjs from 'dayjs'
 import CreateUser from './create-user'
+import { IAction } from '../../../types/modal'
 const { Item } = Form
 const UserList = () => {
   const [data, setData] = useState<User.UserItem[]>()
   const [form] = Form.useForm()
   const [total, setTotal] = useState(0)
+  const userRef = useRef<{
+    open: (type: IAction, data?: User.UserItem) => void
+  }>()
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10
@@ -23,11 +27,8 @@ const UserList = () => {
       pageSize: params.pageSize
     })
 
-    const finalRes = new Array(100)
-      .fill(res.list[0])
-      .map((it, index) => ({ ...it, userId: it.userId + index }))
-    setData(finalRes)
-    setTotal(finalRes.length)
+    setData(res.list)
+    setTotal(res.list.length)
     setPagination({
       current: res.page.pageNum,
       pageSize: res.page.pageSize
@@ -51,6 +52,13 @@ const UserList = () => {
     form.resetFields()
   }
 
+  const handleEdit = (value: User.UserItem) => {
+    userRef.current?.open('edit', value)
+  }
+
+  const handleCreate = () => {
+    userRef.current?.open('create')
+  }
   const dataSource = [
     {
       _id: '',
@@ -123,7 +131,9 @@ const UserList = () => {
       render: (value, record) => {
         return (
           <>
-            <Button type='text'>编辑</Button>
+            <Button type='text' onClick={() => handleEdit(record)}>
+              编辑
+            </Button>
             <Button type='text'>删除</Button>
           </>
         )
@@ -167,7 +177,11 @@ const UserList = () => {
             <span>用户列表</span>
           </div>
           <div className='right'>
-            <Button type='primary' style={{ marginRight: '20px' }}>
+            <Button
+              type='primary'
+              style={{ marginRight: '20px' }}
+              onClick={handleCreate}
+            >
               新增
             </Button>
             <Button type='primary' danger>
@@ -197,7 +211,15 @@ const UserList = () => {
           }}
         />
       </div>
-      <CreateUser />
+      <CreateUser
+        mRef={userRef}
+        update={() => {
+          getTableData({
+            pageNum: 1,
+            pageSize: pagination.pageSize
+          })
+        }}
+      />
     </div>
   )
 }
