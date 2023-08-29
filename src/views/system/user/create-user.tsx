@@ -1,5 +1,5 @@
 import { Form, Input, InputNumber, Modal, Select, Upload, message } from 'antd'
-import React, { useState } from 'react'
+import React, { useImperativeHandle, useRef, useState } from 'react'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 import type {
   RcFile,
@@ -8,16 +8,41 @@ import type {
   UploadProps
 } from 'antd/es/upload/interface'
 import storage from '../../../utils/storage'
+import { User } from '../../../types/api'
+import { IAction, IModalProp } from '../../../types/modal'
+import api from '../../../api/service'
+
 const { Item } = Form
-const CreateUser = () => {
+const CreateUser = (props: IModalProp) => {
   const [form] = Form.useForm()
   const [img, setImg] = useState('')
   const [loading, setLoading] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const [type, setType] = useState<IAction>('create')
+  const ref = useRef(null)
   const handleSubmit = async () => {
     const valid = await form.validateFields()
     console.log(valid)
+    if (valid) {
+      const params = {
+        ...form.getFieldsValue(),
+        userImg: img
+      }
+      if (type === 'create') {
+        await api.userCreate(params)
+        message.success('创建成功')
+      } else {
+        await api.userEdit(params)
+        message.success('修改成功')
+      }
+      handleCancel()
+      props.update()
+    }
   }
-  const handleCancel = () => {}
+  const handleCancel = () => {
+    setVisible(false)
+    form.resetFields()
+  }
 
   //上传之前处理
   const beforeUpload = (file: RcFile) => {
@@ -58,15 +83,33 @@ const CreateUser = () => {
       message.error('上传失败')
     }
   }
+  //向父组件暴露open方法
+  useImperativeHandle(props.mRef, () => {
+    return {
+      open
+    }
+  })
+  //打开子组件的方法
+  const open = (type: IAction, data?: User.UserItem) => {
+    setType(type)
+    setVisible(true)
+    if (type === 'edit' && data) {
+      form.setFieldsValue(data)
+      setImg(data.userImg)
+    }
+  }
   return (
     <Modal
-      title='创建用户'
+      title={type === 'create' ? '新增用户' : '编辑用户'}
       width={800}
-      open={true}
+      open={visible}
       onOk={handleSubmit}
       onCancel={handleCancel}
     >
       <Form form={form} labelCol={{ span: 4 }}>
+        <Item name='userId' hidden>
+          <Input />
+        </Item>
         <Item
           label='用户名称'
           name='userName'
@@ -84,11 +127,7 @@ const CreateUser = () => {
         <Item label='手机号' name='mobile'>
           <InputNumber placeholder='请输入手机号' style={{ width: '100%' }} />
         </Item>
-        <Item
-          label='部门'
-          name='deptId'
-          rules={[{ required: true, message: '请选择部门' }]}
-        >
+        <Item label='部门' name='deptId'>
           <Input placeholder='请选择部门' />
         </Item>
         <Item label='岗位' name='job'>
