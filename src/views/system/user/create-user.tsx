@@ -1,6 +1,10 @@
 import { Form, Input, InputNumber, Modal, Select, Upload, message } from 'antd'
 import React, { useImperativeHandle, useRef, useState } from 'react'
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
+import {
+  ExclamationCircleFilled,
+  LoadingOutlined,
+  PlusOutlined
+} from '@ant-design/icons'
 import type {
   RcFile,
   UploadChangeParam,
@@ -11,6 +15,7 @@ import storage from '../../../utils/storage'
 import { User } from '../../../types/api'
 import { IAction, IModalProp } from '../../../types/modal'
 import api from '../../../api/service'
+import { useAntdTable } from 'ahooks'
 
 const { Item } = Form
 const CreateUser = (props: IModalProp) => {
@@ -20,6 +25,7 @@ const CreateUser = (props: IModalProp) => {
   const [visible, setVisible] = useState(false)
   const [type, setType] = useState<IAction>('create')
   const ref = useRef(null)
+
   const handleSubmit = async () => {
     const valid = await form.validateFields()
     console.log(valid)
@@ -35,11 +41,13 @@ const CreateUser = (props: IModalProp) => {
         await api.userEdit(params)
         message.success('修改成功')
       }
+
       handleCancel()
       props.update()
     }
   }
   const handleCancel = () => {
+    setImg('')
     setVisible(false)
     form.resetFields()
   }
@@ -98,6 +106,7 @@ const CreateUser = (props: IModalProp) => {
       setImg(data.userImg)
     }
   }
+
   return (
     <Modal
       title={type === 'create' ? '新增用户' : '编辑用户'}
