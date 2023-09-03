@@ -8,50 +8,45 @@ import dayjs from 'dayjs'
 import CreateUser from './create-user'
 import { IAction } from '../../../types/modal'
 import { ExclamationCircleFilled } from '@ant-design/icons'
+import { useAntdTable } from 'ahooks'
+import service from '../../../api/service'
 const { Item } = Form
 const UserList = () => {
-  const [data, setData] = useState<User.UserItem[]>()
   const [form] = Form.useForm()
-  const [total, setTotal] = useState(0)
   const [selectedUserIds, setSlectedUserIds] = useState<number[]>([])
   const userRef = useRef<{
     open: (type: IAction, data?: User.UserItem) => void
   }>()
+
+  const getTableData = async (
+    { current, pageSize }: { current: number; pageSize: number },
+    formData: User.Params
+  ) => {
+    return api
+      .getUserList({
+        ...formData,
+        pageNum: current,
+        pageSize: pageSize
+      })
+      .then(res => ({
+        total: res.page.total,
+        list: res.list
+      }))
+  }
+  const { tableProps, search } = useAntdTable(getTableData, {
+    form: form
+  })
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10
   })
-  const getTableData = async (params: PageParams) => {
-    const values = form.getFieldsValue()
-    const res = await api.getUserList({
-      ...values,
-      pageNum: params.pageNum,
-      pageSize: params.pageSize
-    })
-
-    setData(res.list)
-    setTotal(res.page.total)
-    setPagination({
-      current: res.page.pageNum,
-      pageSize: res.page.pageSize
-    })
-  }
-  useEffect(() => {
-    getTableData({
-      pageNum: pagination.current,
-      pageSize: pagination.pageSize
-    })
-  }, [pagination.current, pagination.pageSize])
 
   const handleSearch = () => {
-    getTableData({
-      pageNum: 1,
-      pageSize: pagination.pageSize
-    })
+    search.submit()
   }
 
   const handleReset = () => {
-    form.resetFields()
+    search.reset()
   }
 
   const handleEdit = (value: User.UserItem) => {
@@ -95,10 +90,7 @@ const UserList = () => {
       await api.userDel(params)
       message.success('删除成功')
       setSlectedUserIds([])
-      getTableData({
-        pageNum: 1,
-        pageSize: pagination.pageSize
-      })
+      search.reset()
     } catch (error) {
       console.log(error)
     }
@@ -136,7 +128,11 @@ const UserList = () => {
     {
       title: '用户名',
       dataIndex: 'userName',
-      key: 'userName'
+      key: 'userName',
+      render: (record, index) => {
+        console.log(index)
+        return <span></span>
+      }
     },
     {
       title: '用户邮箱',
@@ -253,32 +249,15 @@ const UserList = () => {
         <Table
           bordered
           rowKey='userId'
-          rowSelection={{ type: 'checkbox', ...rowSelection }}
-          dataSource={data}
+          rowSelection={{ type: 'radio', ...rowSelection }}
           columns={columns}
-          pagination={{
-            position: ['bottomRight'],
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total,
-            showSizeChanger: true,
-            showTotal: total => `共${total}条`,
-            onChange: (page, pageSize) => {
-              setPagination({
-                current: page,
-                pageSize
-              })
-            }
-          }}
+          {...tableProps}
         />
       </div>
       <CreateUser
         mRef={userRef}
         update={() => {
-          getTableData({
-            pageNum: 1,
-            pageSize: pagination.pageSize
-          })
+          search.reset()
         }}
       />
     </div>
